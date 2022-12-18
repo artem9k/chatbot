@@ -1,7 +1,4 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-
 export default function handler(req, res) {
-
     const oai_api_key = process.env.API_KEY
 
     const headers = new Headers()
@@ -35,5 +32,4 @@ export default function handler(req, res) {
     .catch( (error) => {
         res.status(500).json(error)
     })
-
 }

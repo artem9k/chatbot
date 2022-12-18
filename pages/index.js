@@ -25,13 +25,12 @@ import {
 } from 'antd';
 
 const mathMessages = [
-    new Message({ id: 1, message: math_prompt_1}),
+    new Message({id: 1, message: math_prompt_1}),
     new Message({id: 1, message: math_prompt_2})
 ]
 
 const physicsMessages = [
-
-    new Message({ id: 1, message: physics_prompt_1}),
+    new Message({id: 1, message: physics_prompt_1}),
     new Message({id: 1, message: physics_prompt_2})
 ]
 
@@ -128,7 +127,7 @@ export default function Home() {
 
     return (
         <div style={{padding:0, margin:0, border: 0, height:'100%', width: "100%"}}>
-<Content className="App" style={{paddingBottom: '50px', width:"650px", margin: "auto"}}>
+        <Content className="App" style={{paddingBottom: '50px', width:"650px", margin: "auto"}}>
         <Col>
         <Card width={100 } style={{textAlign:"center"}}>
             <h1 color={{titleColor}}>Educational Chatbot </h1>
@@ -142,9 +141,7 @@ export default function Home() {
     
         <Card>
         <div className="body" style={{width: '600px', margin: 'auto' }}>
-
         <div style={{overflowY:"auto", height:"250px"}} ref={scrollRef}>
-
             <ChatFeed
             messages={messageList} // Boolean: list of message objects
             isTyping={typing} // Boolean: is the recipient typing
@@ -164,9 +161,7 @@ export default function Home() {
             }}
             />
         </div>
-
         <Divider/>
-
         <div style={{alignContent: 'center', paddingTop:'10px'}}>
             <div style={{display: 'inline-block', paddingRight: '2px'}}>
                 <input
@@ -192,6 +187,5 @@ export default function Home() {
         </Col>
         </Content>
         </div>
-        
     )
 }
