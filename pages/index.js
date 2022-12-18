@@ -24,6 +24,7 @@ import {
     Space
 } from 'antd';
 
+
 const mathMessages = [
     new Message({id: 1, message: math_prompt_1}),
     new Message({id: 1, message: math_prompt_2})
@@ -37,15 +38,40 @@ const physicsMessages = [
 var prompt = math_prompt_1 + "\n" + math_prompt_2 
 const { Header, Footer, Content }  = Layout;
 
+const physics_hints = [
+    'Do heavier objects fall more slowly than lighter objects?',
+    'Why do objects float in liquids denser than themselves?',
+    'What is the difference between centripetal acceleration and centrifugal force?',
+    'What is the difference between energy and power?',
+    'Can light bend around corners?',
+    'Can gold be created from other elements?',
+    'Can sounds waves generate heat',
+    'Can the decay half-life of a material be changed?',
+    'Can radio antennas emit visible light?',
+    'Do atoms ever actually touch each other?'
+]
+
+const math_hints = [ 
+    'What is a monad?',
+    'What is the Fundamental Theorem of Calculus?',
+    'What is the Collatz conjecture?',
+    'How can you derive an NP-Complete problem from a NP problem?',
+    'What is an infinite Group?',
+    'What is a Hamiltonian Circuit?',
+    'What is a basis?'
+]
+
 export default function Home() {
     const inputReference = useRef(null);
     const [messageList, setMessageList]= useState(physicsMessages);
     const [typing, setTyping] = useState(false)
     const scrollRef = useRef(null)
+    const buttonRef = useRef(null)
     const [mode, setMode] = useState("math")
     const [modeChange, setModeChange] = useState(false)
     const [titleColor, setTitleColor] = useState('blue')
     const [handleMessage, setHandleMessage] = useState(true)
+    const [hints, setHints] = useState(physics_hints)
     const runApiRequest = async (prompt) => {
         var res = "";
         try {
@@ -62,15 +88,20 @@ export default function Home() {
             console.log("`res` is null")
             return "null"
         }
+        console.log("res is ")
+        console.log(res)
+
         return res.data.choices[0].text
     }
 
     useEffect(() => {
         if (modeChange) {
             if (mode == "math") {
+                setHints(math_hints)
                 setMessageList(mathMessages)
             }
             else if(mode=="physics") {
+                setHints(physics_hints)
                 setMessageList(physicsMessages)
             }
             setModeChange(false)
@@ -128,7 +159,14 @@ export default function Home() {
         setModeChange(true)
     }
 
-    const button = <a href="#" onClick={handleInput} style={{padding: '8px', borderRadius: '30px', backgroundColor: '#0084FF', color: 'white', fontFamily: 'Roboto, Helvetica, sans-serif', textDecoration: "none", border:'2px solid black'}} >Send</a>
+    const button = <a href="#" onClick={handleInput} ref={buttonRef} style={{padding: '8px', borderRadius: '30px', backgroundColor: '#0084FF', color: 'white', fontFamily: 'Roboto, Helvetica, sans-serif', textDecoration: "none", border:'2px solid black'}} >Send</a>
+
+    const handleKeyPress = (event) => {
+        console.log("key press recorded")
+        if(event.key === 'Enter'){
+            console.log("enter pressed")
+        }
+      }
 
     return (
         <div style={{padding:0, margin:0, border: 0, height:'100%', width: "100%"}}>
@@ -160,8 +198,11 @@ export default function Home() {
                 fontWeight: 500
             },
             chatbubble: {
-                borderRadius: 30,
-                padding: 10
+                borderRadius: 15,
+                paddingRight: 15,
+                paddingLeft: 15,
+                paddingTop: 5,
+                paddingBottom: 5,
             }
             }}
             />
@@ -171,10 +212,10 @@ export default function Home() {
             <div style={{display: 'inline-block', paddingRight: '2px'}}>
                 <input
                     ref={inputReference}
-                    placeholder="Type here..."
+                    placeholder={hints[Math.floor(Math.random() * hints.length)]}
                     onChange={() => {console.log("changed")}}
                     style={{
-                        borderRadius: 30,
+                        borderRadius: 15,
                         padding: 9,
                         width: 500
                     }}
