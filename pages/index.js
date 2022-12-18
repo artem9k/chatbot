@@ -45,6 +45,7 @@ export default function Home() {
     const [mode, setMode] = useState("math")
     const [modeChange, setModeChange] = useState(false)
     const [titleColor, setTitleColor] = useState('blue')
+    const [handleMessage, setHandleMessage] = useState(true)
     const runApiRequest = async (prompt) => {
         var res = "";
         try {
@@ -77,7 +78,9 @@ export default function Home() {
 
         var last = messageList[messageList.length - 1]
         const text = last.message
+        if (!handleMessage) {
         if (last.id == 0) {
+            setHandleMessage(true)
             setTyping(true)
             replyMessage(text).then(
                 () => {
@@ -89,6 +92,7 @@ export default function Home() {
                 }
             )
         }
+    }
     })
 
     const process_input = (input) => {
@@ -116,6 +120,7 @@ export default function Home() {
         const new_message_list = [...messageList, new_message]
         setMessageList(new_message_list);
         inputReference.current.value = "";
+        setHandleMessage(false)
     }
 
     const handlePicker = (subject) => {
