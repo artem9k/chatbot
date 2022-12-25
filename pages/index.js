@@ -1,30 +1,34 @@
 import "react-chat-elements/dist/main.css"
 import React, { useState, useEffect, useRef } from 'react'
-import { ChatFeed, Message } from "react-chat-ui";
+import Box from '@mui/material/Box';
+import TopMenu from './TopMenu'
+import SideMenu from './SideMenu'
 import axios from 'axios'
+import {ChatWindow, Message, MessageRow} from './ChatWindow'
 
-const physics_prompt_1="AI: Hey! I'm Feynman, a super intelligent AI designed to help humans with physics!\n"
-const physics_prompt_2="AI: Go ahead! Ask me anything!\n"
+import { physics_prompt_1, 
+    physics_prompt_2, 
+    math_prompt_1, 
+    math_prompt_2,
+    physics_hints,
+    math_hints
+ } from "./media";
 
-const math_prompt_1 ="AI: Hey! I'm Leibniz, a super intelligent AI designed to help humans with mathematics!\n"
-const math_prompt_2 ="AI: Go ahead! Ask me anything!\n"
+import YouTube from "react-youtube";
 
 import {
+    Grid, Input, InputBase
+}
+
+from '@mui/material';
+
+import {
+    Button,
     Layout,
-    Row,
-    Col,
-    InputNumber,
-    Button, 
-    DatePicker,
-    Slider,
-    Divider,
-    Card,
-    Menu,
-    Dropdown,
-    Space
 } from 'antd';
-
-
+import { InputUnstyled } from "@mui/base";
+import { YoutubeSearchedFor } from "@mui/icons-material";
+/*
 const mathMessages = [
     new Message({id: 1, message: math_prompt_1}),
     new Message({id: 1, message: math_prompt_2})
@@ -34,36 +38,25 @@ const physicsMessages = [
     new Message({id: 1, message: physics_prompt_1}),
     new Message({id: 1, message: physics_prompt_2})
 ]
+*/
+
+const opts = {
+width: '300',
+height: '200',
+playerVars: {
+    // https://developers.google.com/youtube/player_parameters
+    autoplay: 1,
+}
+}
 
 var prompt = math_prompt_1 + "\n" + math_prompt_2 
 const { Header, Footer, Content }  = Layout;
 
-const physics_hints = [
-    'Do heavier objects fall more slowly than lighter objects?',
-    'Why do objects float in liquids denser than themselves?',
-    'What is the difference between centripetal acceleration and centrifugal force?',
-    'What is the difference between energy and power?',
-    'Can light bend around corners?',
-    'Can gold be created from other elements?',
-    'Can sounds waves generate heat',
-    'Can the decay half-life of a material be changed?',
-    'Can radio antennas emit visible light?',
-    'Do atoms ever actually touch each other?'
-]
-
-const math_hints = [ 
-    'What is a monad?',
-    'What is the Fundamental Theorem of Calculus?',
-    'What is the Collatz conjecture?',
-    'How can you derive an NP-Complete problem from a NP problem?',
-    'What is an infinite Group?',
-    'What is a Hamiltonian Circuit?',
-    'What is a basis?'
-]
-
 export default function Home() {
+
+    // chat
     const inputReference = useRef(null);
-    const [messageList, setMessageList]= useState(physicsMessages);
+    //const [messageList, setMessageList]= useState(physicsMessages);
     const [typing, setTyping] = useState(false)
     const scrollRef = useRef(null)
     const buttonRef = useRef(null)
@@ -72,6 +65,12 @@ export default function Home() {
     const [titleColor, setTitleColor] = useState('blue')
     const [handleMessage, setHandleMessage] = useState(true)
     const [hints, setHints] = useState(physics_hints)
+
+    // video player
+    const [videoId, setVideoId] = useState("")
+    const videoInputRef = useRef(null)
+    const [playerHidden, setPlayerHidden] = useState(true)
+
     const runApiRequest = async (prompt) => {
         var res = "";
         try {
@@ -95,6 +94,8 @@ export default function Home() {
     }
 
     useEffect(() => {
+
+        // set math or physics messages
         if (modeChange) {
             if (mode == "math") {
                 setHints(math_hints)
@@ -106,7 +107,9 @@ export default function Home() {
             }
             setModeChange(false)
         }
-
+        
+        // update messages
+        /*
         var last = messageList[messageList.length - 1]
         const text = last.message
         if (!handleMessage) {
@@ -123,7 +126,16 @@ export default function Home() {
                 }
             )
         }
-    }
+        }
+        */
+
+        // show video input or youtube window
+        if (videoId == "") {
+            setPlayerHidden(true)
+        }
+        else {
+            setPlayerHidden(false)
+        }
     })
 
     const process_input = (input) => {
@@ -166,13 +178,61 @@ export default function Home() {
         if(event.key === 'Enter'){
             console.log("enter pressed")
         }
-      }
+    }
+
+    const handleVideoReturn = () => {
+        setVideoId("")
+        setPlayerHidden(true)
+    }
+
+    const handleVideoSubmit = () => {
+        const videoUrl = videoInputRef.current.value
+        const video_id = videoUrl.split('v=')[1]
+        setVideoId(video_id)
+        setPlayerHidden(false)
+    }
+
+    const handleKeyDown = (e) => {
+        if (e.key == 'Enter') {
+            handleVideoSubmit()
+        }
+    }
 
     return (
-        <div style={{padding:0, margin:0, border: 0, height:'100%', width: "100%"}}>
-        <Content className="App" style={{paddingBottom: '50px', width:"650px", margin: "auto"}}>
-        <Col>
-        <Card width={100 } style={{textAlign:"center"}}>
+        <Box>
+        
+        <div style={{float: 'right', width: 'calc(100vw - 50px)', height:'100vh'}}>
+            <TopMenu />
+            <Content>
+                <Grid container>
+                <Grid item xs={6} md={6} height='calc((100vh - 50px) / 2)' borderRight='1px solid grey' borderBottom='1px solid grey' backgroundColor='#2C2C2C'>
+                </Grid>
+                <Grid class="video-player" item xs={6} md={6} borderBottom='1px solid grey' backgroundColor='#2C2C2C'>
+                    <Grid container justifyItems='center' justifyContent='center' height='100%'>
+                        <Grid item margin='auto'>
+                            <Input inputRef={videoInputRef} hidden={playerHidden} style={{color: 'lightgrey', display: playerHidden ? "block" : "none"}} placeholder="Enter a video URL" ref={videoInputRef} onKeyDown={handleKeyDown} />
+                            <Button style={{display: playerHidden ? "none" : "block"}} onClick={handleVideoReturn}>Return</Button>
+                            <YouTube style={{display: playerHidden ? "none" : "block"}} videoId={videoId} opts={opts}/>
+                        </Grid>
+                    </Grid>
+                </Grid>
+                <Grid item xs={6} md={6} height='calc((100vh - 50px) / 2)' borderRight='1px solid grey' backgroundColor='#2C2C2C'>
+                </Grid>
+                <Grid class="assistant" item xs={6} md={6} backgroundColor='#2C2C2C'>
+                <div style={{overflowY:"auto", height:"50px", width:'400px'}} ref={scrollRef}>
+                    <MessageRow user={true} text={'Hello world'} id={1}/>
+                    <MessageRow user={false} text={'deez world'} id={2}/>
+                </div>
+                </Grid>
+                </Grid>
+            </Content>
+        </div>
+    </Box>
+    )
+}
+
+/*
+ <Card width={100} style={{textAlign:"center"}}>
             <h1 color={{titleColor}}>Educational Chatbot </h1>
         </Card>
         <Card size="large" width={100}>
@@ -181,9 +241,8 @@ export default function Home() {
                 <Button onClick={() => handlePicker("physics")} type="primary" color="yellow" width='400px' ghost>Physics</Button>
             </Row>
         </Card>
-    
         <Card>
-        <div className="body" style={{width: '600px', margin: 'auto' }}>
+        <div className="body" style={{width: '700px', margin: 'auto' }}>
         <div style={{overflowY:"auto", height:"250px"}} ref={scrollRef}>
             <ChatFeed
             messages={messageList} // Boolean: list of message objects
@@ -230,8 +289,7 @@ export default function Home() {
         <Card size="large" width={100} style={{alignContent: 'center', justifyContent: 'center', alignItems: 'center'}}>
             <a href='https://github.com/artem9k'>@artem_9k</a>
         </Card>
-        </Col>
-        </Content>
-        </div>
-    )
-}
+
+
+
+*/
