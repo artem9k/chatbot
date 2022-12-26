@@ -104,11 +104,8 @@ export default function Home() {
     const inputReference = useRef(null);
     const [messageList, setMessageList]= useState(physicsMessages);
     const [typing, setTyping] = useState(false)
-    const scrollRef = useRef(null)
-    const buttonRef = useRef(null)
-    const [mode, setMode] = useState("math")
+    const [mode, setMode] = useState("physics")
     const [modeChange, setModeChange] = useState(false)
-    const [titleColor, setTitleColor] = useState('blue')
     const [handleMessage, setHandleMessage] = useState(true)
     const [hints, setHints] = useState(physics_hints)
     const runApiRequest = async (prompt) => {
