@@ -237,7 +237,7 @@ export default function Home() {
                         opacity-0">
                 </div>
                 </div>
-                <div class="h-5/6 lg:w-3/6 sm:w-6/12 w-12/12 border-2 rounded-3xl px-3 pb-3 flex flex-col justify-between gap-2 h-[28rem] overflow-scroll ">
+                <div class="h-5/6 lg:w-3/6 sm:w-6/12 w-12/12 border-2 rounded-3xl px-3 pb-3 flex flex-col justify-between gap-2 h-[calc(100vh-232px)] overflow-scroll ">
                 <div class="flex flex-col h-full gap-2 overflow-y-auto no-scrollbar" id="messageScreen">
                     {messageList}
                     {typing ? <TypingMsg /> : null}
