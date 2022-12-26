@@ -1,10 +1,7 @@
 import "react-chat-elements/dist/main.css"
 import React, { useState, useEffect, useRef } from 'react'
 import Box from '@mui/material/Box';
-import TopMenu from './TopMenu'
-import SideMenu from './SideMenu'
 import axios from 'axios'
-import {ChatWindow, Message, MessageRow} from './ChatWindow'
 
 import { physics_prompt_1, 
     physics_prompt_2, 
@@ -12,33 +9,83 @@ import { physics_prompt_1,
     math_prompt_2,
     physics_hints,
     math_hints
- } from "./media";
+ } from "../public/media";
 
-import YouTube from "react-youtube";
-
-import {
-    Grid, Input, InputBase
+const resizeableStyle = {
+    resize: 'both',
+    border: '1px solid black'
 }
-
-from '@mui/material';
 
 import {
     Button,
     Layout,
 } from 'antd';
-import { InputUnstyled } from "@mui/base";
-import { YoutubeSearchedFor } from "@mui/icons-material";
-/*
+
+const BouncingDotsLoader = (props) => {
+    return (
+        <div className="bouncing-loader">
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+    );
+  };
+
+const AIMsg = (props) => {
+    return(
+    <div class="flex flex-col items-start transition-all ">
+    <div class="flex flex-row items-end pt-1 ">
+    <img alt="robot" src="/robot.png" width="75" height="75" decoding="async" data-nimg="1" class="block pr-2 animate-pop animate-fade-in-down
+   w-[35px] sm:w-[40px] 
+   " loading="lazy" />
+   <div class="bg-[#F2F2F2] rounded-3xl px-5 py-2 flex flex-col gap-1 font-SF max-w-[80%]
+ ">
+    <p class="text-sm md:text-md lg:text-lg leading-tight">
+        <span>{props.message}</span>
+    </p>
+    </div>
+    </div>
+    </div>
+    )
+}
+
+const TypingMsg = (props) => {
+    return(
+    <div class="flex flex-col items-start transition-all ">
+    <div class="flex flex-row items-end pt-1 ">
+    <img alt="robot" src="/robot.png" width="75" height="75" decoding="async" data-nimg="1" class="block pr-2 animate-pop animate-fade-in-down
+   w-[35px] sm:w-[40px]
+   " loading="lazy" />
+   <div class="bg-[#F2F2F2] rounded-3xl px-5 py-2 flex flex-col gap-1 font-SF max-w-[80%]
+ animate-pop">
+
+    <p class="text-sm md:text-md lg:text-lg leading-tight pt-1 pb-1 animate-pop">
+        <span>
+            <BouncingDotsLoader/>
+        </span>
+    </p>
+    </div>
+    </div>
+    </div>
+    )
+}
+
+const UserMsg = (props) => {
+    return (
+    <div class="bg-[#067EFE] text-white self-end rounded-3xl px-5 py-2 flex flex-col gap-1 font-SF max-w-[80%]
+         animate-pop"><p class="text-sm md:text-md lg:text-lg leading-tight">{props.message}</p></div>
+    )
+}
+
 const mathMessages = [
-    new Message({id: 1, message: math_prompt_1}),
-    new Message({id: 1, message: math_prompt_2})
+    <AIMsg message={math_prompt_1} key={0}/>,
+    <AIMsg message={math_prompt_2} key={1}/>
 ]
 
 const physicsMessages = [
-    new Message({id: 1, message: physics_prompt_1}),
-    new Message({id: 1, message: physics_prompt_2})
+    <AIMsg message={physics_prompt_1} key={0}/>,
+    <AIMsg message={physics_prompt_2} key={1}/>
 ]
-*/
 
 const opts = {
 width: '300',
@@ -53,10 +100,9 @@ var prompt = math_prompt_1 + "\n" + math_prompt_2
 const { Header, Footer, Content }  = Layout;
 
 export default function Home() {
-
     // chat
     const inputReference = useRef(null);
-    //const [messageList, setMessageList]= useState(physicsMessages);
+    const [messageList, setMessageList]= useState(physicsMessages);
     const [typing, setTyping] = useState(false)
     const scrollRef = useRef(null)
     const buttonRef = useRef(null)
@@ -65,12 +111,6 @@ export default function Home() {
     const [titleColor, setTitleColor] = useState('blue')
     const [handleMessage, setHandleMessage] = useState(true)
     const [hints, setHints] = useState(physics_hints)
-
-    // video player
-    const [videoId, setVideoId] = useState("")
-    const videoInputRef = useRef(null)
-    const [playerHidden, setPlayerHidden] = useState(true)
-
     const runApiRequest = async (prompt) => {
         var res = "";
         try {
@@ -94,7 +134,6 @@ export default function Home() {
     }
 
     useEffect(() => {
-
         // set math or physics messages
         if (modeChange) {
             if (mode == "math") {
@@ -109,33 +148,20 @@ export default function Home() {
         }
         
         // update messages
-        /*
         var last = messageList[messageList.length - 1]
-        const text = last.message
+        const text = last.props.message
         if (!handleMessage) {
-        if (last.id == 0) {
+        if (last.props.id == 0) {
             setHandleMessage(true)
             setTyping(true)
             replyMessage(text).then(
                 () => {
                     setTyping(false)
                 }
-            ).then(
-                () => {
-                    scrollRef.current.scrollTop = scrollRef.current.scrollHeight + 20
-                }
             )
         }
         }
-        */
 
-        // show video input or youtube window
-        if (videoId == "") {
-            setPlayerHidden(true)
-        }
-        else {
-            setPlayerHidden(false)
-        }
     })
 
     const process_input = (input) => {
@@ -152,144 +178,98 @@ export default function Home() {
         prompt = push_to_prompt(prompt, input)
         const openai_completion = await runApiRequest(prompt)
         prompt = prompt + openai_completion + '\n'
-        const new_message = new Message({ id: 1, message: openai_completion})
+        const new_message = < AIMsg id={1} message={openai_completion} key={messageList.length}/>
         const new_list = [...messageList, new_message]
         setMessageList(new_list)
     }
 
-    const handleInput = async () => {
+    const handleSubmit = async () => {
         const input = inputReference.current.value;
-        const new_message = new Message({id: 0, message: input})
+        const new_message = < UserMsg id={0} message={input} key={messageList.length}/>
         const new_message_list = [...messageList, new_message]
         setMessageList(new_message_list);
         inputReference.current.value = "";
         setHandleMessage(false)
     }
 
-    const handlePicker = (subject) => {
-        setMode(subject)
-        setModeChange(true)
-    }
-
-    const button = <a href="#" onClick={handleInput} ref={buttonRef} style={{padding: '8px', borderRadius: '30px', backgroundColor: '#0084FF', color: 'white', fontFamily: 'Roboto, Helvetica, sans-serif', textDecoration: "none", border:'2px solid black'}} >Send</a>
-
-    const handleKeyPress = (event) => {
-        console.log("key press recorded")
-        if(event.key === 'Enter'){
-            console.log("enter pressed")
+    const handleKeyDown = (e) => {
+        if (e.key == 'Enter') {
+            handleSubmit()
         }
     }
 
-    const handleVideoReturn = () => {
-        setVideoId("")
-        setPlayerHidden(true)
+    const selectChange = (e) => {
+        const new_mode = e.target.value
+        if (new_mode == 'Mathematics') {
+            setMode("math")
+            setModeChange(true)
+        }
+        else if (new_mode == 'Physics') {
+            setMode("physics")
+            setModeChange(true)
+        }
     }
 
-    const handleVideoSubmit = () => {
-        const videoUrl = videoInputRef.current.value
-        const video_id = videoUrl.split('v=')[1]
-        setVideoId(video_id)
-        setPlayerHidden(false)
-    }
-
-    const handleKeyDown = (e) => {
-        if (e.key == 'Enter') {
-            handleVideoSubmit()
+    const clear = () => {
+        if (mode == 'math') {
+            setMessageList(mathMessages)
+        }
+        else if (mode == "physics") {
+            setMessageList(physicsMessages)
         }
     }
 
     return (
         <Box>
-        
-        <div style={{float: 'right', width: 'calc(100vw - 50px)', height:'100vh'}}>
-            <TopMenu />
-            <Content>
-                <Grid container>
-                <Grid item xs={6} md={6} height='calc((100vh - 50px) / 2)' borderRight='1px solid grey' borderBottom='1px solid grey' backgroundColor='#2C2C2C'>
-                </Grid>
-                <Grid class="video-player" item xs={6} md={6} borderBottom='1px solid grey' backgroundColor='#2C2C2C'>
-                    <Grid container justifyItems='center' justifyContent='center' height='100%'>
-                        <Grid item margin='auto'>
-                            <Input inputRef={videoInputRef} hidden={playerHidden} style={{color: 'lightgrey', display: playerHidden ? "block" : "none"}} placeholder="Enter a video URL" ref={videoInputRef} onKeyDown={handleKeyDown} />
-                            <Button style={{display: playerHidden ? "none" : "block"}} onClick={handleVideoReturn}>Return</Button>
-                            <YouTube style={{display: playerHidden ? "none" : "block"}} videoId={videoId} opts={opts}/>
-                        </Grid>
-                    </Grid>
-                </Grid>
-                <Grid item xs={6} md={6} height='calc((100vh - 50px) / 2)' borderRight='1px solid grey' backgroundColor='#2C2C2C'>
-                </Grid>
-                <Grid class="assistant" item xs={6} md={6} backgroundColor='#2C2C2C'>
-                <div style={{overflowY:"auto", height:"50px", width:'400px'}} ref={scrollRef}>
-                    <MessageRow user={true} text={'Hello world'} id={1}/>
-                    <MessageRow user={false} text={'deez world'} id={2}/>
+        <div>
+            <div class="Home_container__bCOhY">
+            <main class="flex flex-col justify-center items-center">
+            <h1 id="title" class="font-SF text-4xl mb-3 mt-6 transform transition duration-200 ease-in-out cursor-pointer text-gradient-to-left font-extrabold text-transparent bg-clip-text bg-gradient-to-br from-purple-600 to-red-600"><img src="/robot.png" alt="Robot" width="50" height="50" id="ada-image" class="inline cursor-pointer mb-2 " />tutor.ai</h1>
+                    <h3 class="text-center text-[#4F4F4F] font-SF text-sm sm:text-lg mb-3 text-black">A tutor for math, physics, and everything in between
+                    </h3>
+                    <div class="flex flex-row items-center justify-center gap-3 lg:w-2/6 sm:w-6/12 w-12/12">
+                        <select onChange={selectChange}  name="language" id="language" class="mb-3 font-SF rounded-full text-sm sm:text-lg important:rounded-xl focus:outline-none bg-[#F2F2F2] px-3 py-2">
+                            <option value="Mathematics">Mathematics</option>
+                            <option value="Physics">Physics</option>
+                        </select>
+                        <div class="absolute z-10 rounded-xl p-3 text-[#4F4F4F] text-sm sm:text-base font-SF 
+                        transform md:translate-x-[95%] translate-x-[20%] 
+                        translate-y-16
+                        w-64  flex flex-col justify-center items-center
+                        transition duration-200 ease-in-out shadow-xl
+                        opacity-0">
                 </div>
-                </Grid>
-                </Grid>
-            </Content>
-        </div>
+                </div>
+                <div class="h-5/6 lg:w-3/6 sm:w-6/12 w-12/12 border-2 rounded-3xl px-3 pb-3 flex flex-col justify-between gap-2 h-[28rem] overflow-scroll ">
+                <div class="flex flex-col h-full gap-2 overflow-y-auto no-scrollbar" id="messageScreen">
+                    {messageList}
+                    {typing ? <TypingMsg /> : null}
+                </div>
+            <div class="rounded-3xl border-2 flex p-1 justify-between">
+
+    <textarea ref={inputReference} class="font-SF text-sm md:text-md lg:text-lg self-center px-2 w-full rounded-2xl  outline-none resize-none transition-all animate-grow" 
+    id="textarea" 
+    placeholder={hints[Math.floor(Math.random() * hints.length)]}
+    rows="1" 
+    style={{height: '20px', overflowY: 'hidden'}}
+    onKeyDown={handleKeyDown}
+    >
+    </textarea>
+    <a onClick={handleSubmit}>
+    <svg width="33" 
+    height="33" 
+    viewBox="0 0 33 33"
+    fill="none" class="transform hover:scale-110 transition duration-300 glow ease-in-out self-end cursor-pointer z-1" xmlns="http://www.w3.org/2000/svg">
+<circle cx="16.5" cy="16.5" r="16.5" fill="#067EFE"/>
+<path d="M17 25.5V8M17 8L10 14M17 8L23.5 14" stroke="white" stroke-width="3" stroke-linecap="round"/>
+</svg>
+    </a>
+    </div>
+    </div>
+    <h3 onClick={clear} class="font-SF my-2 text-[#067EFE] cursor-pointer">clear chat</h3>
+    </main>
+    </div>
+    </div>
     </Box>
     )
 }
-
-/*
- <Card width={100} style={{textAlign:"center"}}>
-            <h1 color={{titleColor}}>Educational Chatbot </h1>
-        </Card>
-        <Card size="large" width={100}>
-            <Row width={100} >
-                <Button onClick={() => handlePicker("math")} type="primary" color="blue" width='400px' ghost >Mathematics</Button>
-                <Button onClick={() => handlePicker("physics")} type="primary" color="yellow" width='400px' ghost>Physics</Button>
-            </Row>
-        </Card>
-        <Card>
-        <div className="body" style={{width: '700px', margin: 'auto' }}>
-        <div style={{overflowY:"auto", height:"250px"}} ref={scrollRef}>
-            <ChatFeed
-            messages={messageList} // Boolean: list of message objects
-            isTyping={typing} // Boolean: is the recipient typing
-            hasInputField={false} // Boolean: use our input, or use your own
-            showSenderName // show the name of the user who sent the message
-            bubblesCentered={false} //Boolean should the bubbles be centered in the feed?
-            bubbleStyles={{
-            text: {
-                fontSize: 15,
-                fontFamily: 'Roboto, Helvetica, sans-serif',
-                fontWeight: 500
-            },
-            chatbubble: {
-                borderRadius: 15,
-                paddingRight: 15,
-                paddingLeft: 15,
-                paddingTop: 5,
-                paddingBottom: 5,
-            }
-            }}
-            />
-        </div>
-        <Divider/>
-        <div style={{alignContent: 'center', paddingTop:'10px'}}>
-            <div style={{display: 'inline-block', paddingRight: '2px'}}>
-                <input
-                    ref={inputReference}
-                    placeholder={hints[Math.floor(Math.random() * hints.length)]}
-                    onChange={() => {console.log("changed")}}
-                    style={{
-                        borderRadius: 15,
-                        padding: 9,
-                        width: 500
-                    }}
-                />
-            </div>
-            <div style={{display: 'inline-block', paddingleft: '2px', float:'right', paddingTop:"5px"}}>
-                {button}
-            </div>
-        </div>
-        </div>
-        </Card>
-        <Card size="large" width={100} style={{alignContent: 'center', justifyContent: 'center', alignItems: 'center'}}>
-            <a href='https://github.com/artem9k'>@artem_9k</a>
-        </Card>
-
-
-
-*/
