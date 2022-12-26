@@ -226,8 +226,8 @@ export default function Home() {
                     </h3>
                     <div class="flex flex-row items-center justify-center gap-3 lg:w-2/6 sm:w-6/12 w-12/12">
                         <select onChange={selectChange}  name="language" id="language" class="mb-3 font-SF rounded-full text-sm sm:text-lg important:rounded-xl focus:outline-none bg-[#F2F2F2] px-3 py-2">
-                            <option value="Mathematics">Mathematics</option>
                             <option value="Physics">Physics</option>
+                            <option value="Mathematics">Mathematics</option>
                         </select>
                         <div class="absolute z-10 rounded-xl p-3 text-[#4F4F4F] text-sm sm:text-base font-SF 
                         transform md:translate-x-[95%] translate-x-[20%] 
