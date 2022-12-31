@@ -220,7 +220,15 @@ export default function Home() {
         <Box>
         <div>
             <div class="Home_container__bCOhY">
-            <main class="flex flex-col justify-center items-center">
+            <script async src="https://www.googletagmanager.com/gtag/js?id=G-8EX1LN411S"></script>
+            <script dangerouslySetInnerHTML={{ __html: `
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-8EX1LN411S');
+            `}}></script>
+                <main class="flex flex-col justify-center items-center">
             <h1 id="title" class="font-SF text-4xl mb-3 mt-6 transform transition duration-200 ease-in-out cursor-pointer text-gradient-to-left font-extrabold text-transparent bg-clip-text bg-gradient-to-br from-purple-600 to-red-600"><img src="/robot.png" alt="Robot" width="50" height="50" id="ada-image" class="inline cursor-pointer mb-2 " />tutor.ai</h1>
                     <h3 class="text-center text-[#4F4F4F] font-SF text-sm sm:text-lg mb-3 text-black">A tutor for math, physics, and everything in between
                     </h3>
@@ -238,7 +246,7 @@ export default function Home() {
                 </div>
                 </div>
                 <div class="h-5/6 lg:w-3/6 sm:w-6/12 w-12/12 border-2 rounded-3xl px-3 pb-3 flex flex-col justify-between gap-2 h-[calc(100vh-232px)] overflow-scroll ">
-                <div class="flex flex-col h-full gap-2 overflow-y-auto no-scrollbar" id="messageScreen">
+                <div class="flex flex-col h-full gap-2 overflow-y-auto no-scrollbar scrollbar-hide" id="messageScreen">
                     {messageList}
                     {typing ? <TypingMsg /> : null}
                 </div>
