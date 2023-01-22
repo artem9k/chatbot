@@ -1,7 +1,7 @@
 import "react-chat-elements/dist/main.css"
 import React, { useState, useEffect, useRef } from 'react'
-import Box from '@mui/material/Box';
 import axios from 'axios'
+import autoAnimate from '@formkit/auto-animate'
 
 import { AIMsg } from "../components/AIMsg/AIMsg";
 import { TypingMsg } from "../components/TypingMsg/TypingMsg";
@@ -15,7 +15,6 @@ import {
     math_prompt_2,
     physics_hints,
     math_hints
-
  } from "../public/media";
 
 const mathMessages = [
@@ -31,7 +30,7 @@ const physicsMessages = [
 var prompt = math_prompt_1 + "\n" + math_prompt_2 
 
 export default function Home() {
-    // chat
+
     const inputReference = useRef(null);
     const [messageList, setMessageList]= useState(physicsMessages);
     const [typing, setTyping] = useState(false)
@@ -39,6 +38,7 @@ export default function Home() {
     const [modeChange, setModeChange] = useState(false)
     const [handleMessage, setHandleMessage] = useState(true)
     const [hints, setHints] = useState(physics_hints)
+    const parent = useRef(null)
 
     const runApiRequest = async (prompt) => {
         var res = "";
@@ -59,6 +59,13 @@ export default function Home() {
     }
 
     useEffect(() => {
+
+        // animation stuff 
+        parent.current && autoAnimate(parent.current, {
+            duration: 100,
+            disrespectUserMotionPreference: true
+        })
+
         // set math or physics messages
         if (modeChange) {
             if (mode == "math") {
@@ -84,9 +91,8 @@ export default function Home() {
                     setTyping(false)
                 }
             )
-        }
-        }
-    })
+        }}
+    }, )
 
     const process_input = (input) => {
         // assume that the input is a single line (for now)
@@ -157,6 +163,7 @@ export default function Home() {
                 gtag('config', 'G-8EX1LN411S');
                 `}}>
                 </script>
+                <title>tutor.ai</title>
                 <main class="flex flex-col justify-center items-center">
                     <h1 id="title" class="font-SF text-4xl mb-3 mt-6 transform transition duration-200 ease-in-out cursor-pointer text-gradient-to-left font-extrabold text-transparent bg-clip-text bg-gradient-to-br from-purple-600 to-red-600"><img src="/robot.png" alt="Robot" width="50" height="50" id="ada-image" class="inline cursor-pointer mb-2 " />tutor.ai</h1>
                     <h3 class="text-center text-[#4F4F4F] font-SF text-sm sm:text-lg mb-3 text-black">A tutor for math, physics, and everything in between
@@ -175,7 +182,10 @@ export default function Home() {
                         </div>
                     </div>
                     <div class="h-5/6 lg:w-3/6 sm:w-6/12 w-12/12 border-2 rounded-3xl px-3 pb-3 flex flex-col justify-between gap-2 h-[calc(100vh-232px)] overflow-scroll ">
-                        <div class="flex flex-col h-full gap-2 overflow-y-auto no-scrollbar scrollbar-hide" id="messageScreen">
+                        <div ref={parent} 
+                            class="flex flex-col h-full gap-2 overflow-y-auto no-scrollbar scrollbar-hide" 
+                            id="messageScreen"
+                            >
                             {messageList}
                             {typing ? <TypingMsg /> : null}
                         </div>
