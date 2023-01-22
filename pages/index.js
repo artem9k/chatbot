@@ -3,12 +3,14 @@ import React, { useState, useEffect, useRef } from 'react'
 import Box from '@mui/material/Box';
 import axios from 'axios'
 
-import { physics_prompt_1, 
+import { 
+    physics_prompt_1, 
     physics_prompt_2, 
     math_prompt_1, 
     math_prompt_2,
     physics_hints,
     math_hints
+
  } from "../public/media";
 
 const resizeableStyle = {
@@ -41,7 +43,7 @@ const AIMsg = (props) => {
    <div class="bg-[#F2F2F2] rounded-3xl px-5 py-2 flex flex-col gap-1 font-SF max-w-[80%]
  ">
     <p class="text-sm md:text-md lg:text-lg leading-tight">
-        <span>{props.message}</span>
+        <span>{props.message.slice(4)}</span>
     </p>
     </div>
     </div>
@@ -158,7 +160,6 @@ export default function Home() {
             )
         }
         }
-
     })
 
     const process_input = (input) => {
@@ -173,8 +174,11 @@ export default function Home() {
 
     const replyMessage = async (input) => {
         prompt = push_to_prompt(prompt, input)
-        const openai_completion = await runApiRequest(prompt)
+        var openai_completion = await runApiRequest(prompt)
         prompt = prompt + openai_completion + '\n'
+        if (openai_completion[0] == '\n') {
+            openai_completion = openai_completion.slice(1)
+        }
         const new_message = < AIMsg id={1} message={openai_completion} key={messageList.length}/>
         const new_list = [...messageList, new_message]
         setMessageList(new_list)
@@ -218,22 +222,22 @@ export default function Home() {
 
     return (
         <Box>
-        <div>
+        <div class='bg-red'>
             <div class="Home_container__bCOhY">
             <script async src="https://www.googletagmanager.com/gtag/js?id=G-8EX1LN411S"></script>
             <script dangerouslySetInnerHTML={{ __html: `
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-
             gtag('config', 'G-8EX1LN411S');
-            `}}></script>
-                <main class="flex flex-col justify-center items-center">
+            `}}>
+            </script>
+            <main class="flex flex-col justify-center items-center">
             <h1 id="title" class="font-SF text-4xl mb-3 mt-6 transform transition duration-200 ease-in-out cursor-pointer text-gradient-to-left font-extrabold text-transparent bg-clip-text bg-gradient-to-br from-purple-600 to-red-600"><img src="/robot.png" alt="Robot" width="50" height="50" id="ada-image" class="inline cursor-pointer mb-2 " />tutor.ai</h1>
                     <h3 class="text-center text-[#4F4F4F] font-SF text-sm sm:text-lg mb-3 text-black">A tutor for math, physics, and everything in between
                     </h3>
                     <div class="flex flex-row items-center justify-center gap-3 lg:w-2/6 sm:w-6/12 w-12/12">
-                        <select onChange={selectChange}  name="language" id="language" class="mb-3 font-SF rounded-full text-sm sm:text-lg important:rounded-xl focus:outline-none bg-[#F2F2F2] px-3 py-2">
+                        <select onChange={selectChange} name="language" id="language" class="mb-3 font-SF rounded-full text-sm sm:text-lg important:rounded-xl focus:outline-none bg-[#F2F2F2] px-3 py-2">
                             <option value="Physics">Physics</option>
                             <option value="Mathematics">Mathematics</option>
                         </select>
