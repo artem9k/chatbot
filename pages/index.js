@@ -3,6 +3,10 @@ import React, { useState, useEffect, useRef } from 'react'
 import Box from '@mui/material/Box';
 import axios from 'axios'
 
+import { AIMsg } from "../components/AIMsg/AIMsg";
+import { TypingMsg } from "../components/TypingMsg/TypingMsg";
+import { UserMsg } from "../components/UserMsg/UserMsg";
+
 import { 
     physics_prompt_1, 
     physics_prompt_2, 
@@ -12,72 +16,6 @@ import {
     math_hints
 
  } from "../public/media";
-
-const resizeableStyle = {
-    resize: 'both',
-    border: '1px solid black'
-}
-
-import {
-    Button,
-    Layout,
-} from 'antd';
-
-const BouncingDotsLoader = (props) => {
-    return (
-        <div className="bouncing-loader">
-          <div></div>
-          <div></div>
-          <div></div>
-        </div>
-    );
-  };
-
-const AIMsg = (props) => {
-    return(
-    <div class="flex flex-col items-start transition-all ">
-    <div class="flex flex-row items-end pt-1 ">
-    <img alt="robot" src="/robot.png" width="75" height="75" decoding="async" data-nimg="1" class="block pr-2 animate-pop animate-fade-in-down
-   w-[35px] sm:w-[40px] 
-   " loading="lazy" />
-   <div class="bg-[#F2F2F2] rounded-3xl px-5 py-2 flex flex-col gap-1 font-SF max-w-[80%]
- ">
-    <p class="text-sm md:text-md lg:text-lg leading-tight">
-        <span>{props.message.slice(4)}</span>
-    </p>
-    </div>
-    </div>
-    </div>
-    )
-}
-
-const TypingMsg = (props) => {
-    return(
-    <div class="flex flex-col items-start transition-all ">
-    <div class="flex flex-row items-end pt-1 ">
-    <img alt="robot" src="/robot.png" width="75" height="75" decoding="async" data-nimg="1" class="block pr-2 animate-pop animate-fade-in-down
-   w-[35px] sm:w-[40px]
-   " loading="lazy" />
-   <div class="bg-[#F2F2F2] rounded-3xl px-5 py-2 flex flex-col gap-1 font-SF max-w-[80%]
- animate-pop">
-
-    <p class="text-sm md:text-md lg:text-lg leading-tight pt-1 pb-1 animate-pop">
-        <span>
-            <BouncingDotsLoader/>
-        </span>
-    </p>
-    </div>
-    </div>
-    </div>
-    )
-}
-
-const UserMsg = (props) => {
-    return (
-    <div class="bg-[#067EFE] text-white self-end rounded-3xl px-5 py-2 flex flex-col gap-1 font-SF max-w-[80%]
-         animate-pop"><p class="text-sm md:text-md lg:text-lg leading-tight">{props.message}</p></div>
-    )
-}
 
 const mathMessages = [
     <AIMsg message={math_prompt_1} key={0}/>,
@@ -89,17 +27,7 @@ const physicsMessages = [
     <AIMsg message={physics_prompt_2} key={1}/>
 ]
 
-const opts = {
-width: '300',
-height: '200',
-playerVars: {
-    // https://developers.google.com/youtube/player_parameters
-    autoplay: 1,
-}
-}
-
 var prompt = math_prompt_1 + "\n" + math_prompt_2 
-const { Header, Footer, Content }  = Layout;
 
 export default function Home() {
     // chat
@@ -110,10 +38,10 @@ export default function Home() {
     const [modeChange, setModeChange] = useState(false)
     const [handleMessage, setHandleMessage] = useState(true)
     const [hints, setHints] = useState(physics_hints)
+
     const runApiRequest = async (prompt) => {
         var res = "";
         try {
-            console.log(prompt)
             res = await axios.post('/api/gpt', {
                 prompt: prompt,
                 model: "text-davinci-002"
@@ -126,9 +54,6 @@ export default function Home() {
             console.log("`res` is null")
             return "null"
         }
-        console.log("res is ")
-        console.log(res)
-
         return res.data.choices[0].text
     }
 
