@@ -61,10 +61,13 @@ export default function Home() {
     useEffect(() => {
 
         // animation stuff 
-        parent.current && autoAnimate(parent.current, {
-            duration: 100,
-            disrespectUserMotionPreference: true
-        })
+
+        (() => {
+            parent.current && autoAnimate(parent.current, {
+                duration: 150,
+                disrespectUserMotionPreference: true
+            })
+        })()
 
         // set math or physics messages
         if (modeChange) {
@@ -92,7 +95,7 @@ export default function Home() {
                 }
             )
         }}
-    }, )
+    }, [messageList, handleMessage, modeChange, mode, parent])
 
     const process_input = (input) => {
         // assume that the input is a single line (for now)
@@ -121,7 +124,6 @@ export default function Home() {
         const new_message = < UserMsg id={0} message={input} key={messageList.length}/>
         const new_message_list = [...messageList, new_message]
         setMessageList(new_message_list);
-        inputReference.current.value = "";
         setHandleMessage(false)
     }
 
