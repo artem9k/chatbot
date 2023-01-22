@@ -6,6 +6,7 @@ import axios from 'axios'
 import { AIMsg } from "../components/AIMsg/AIMsg";
 import { TypingMsg } from "../components/TypingMsg/TypingMsg";
 import { UserMsg } from "../components/UserMsg/UserMsg";
+import { SubmitButton } from "../components/SubmitButton/SubmitButton";
 
 import { 
     physics_prompt_1, 
@@ -146,19 +147,18 @@ export default function Home() {
     }
 
     return (
-        <Box>
         <div class='bg-red'>
             <div class="Home_container__bCOhY">
-            <script async src="https://www.googletagmanager.com/gtag/js?id=G-8EX1LN411S"></script>
-            <script dangerouslySetInnerHTML={{ __html: `
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-8EX1LN411S');
-            `}}>
-            </script>
-            <main class="flex flex-col justify-center items-center">
-            <h1 id="title" class="font-SF text-4xl mb-3 mt-6 transform transition duration-200 ease-in-out cursor-pointer text-gradient-to-left font-extrabold text-transparent bg-clip-text bg-gradient-to-br from-purple-600 to-red-600"><img src="/robot.png" alt="Robot" width="50" height="50" id="ada-image" class="inline cursor-pointer mb-2 " />tutor.ai</h1>
+                <script async src="https://www.googletagmanager.com/gtag/js?id=G-8EX1LN411S"></script>
+                <script dangerouslySetInnerHTML={{ __html: `
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', 'G-8EX1LN411S');
+                `}}>
+                </script>
+                <main class="flex flex-col justify-center items-center">
+                    <h1 id="title" class="font-SF text-4xl mb-3 mt-6 transform transition duration-200 ease-in-out cursor-pointer text-gradient-to-left font-extrabold text-transparent bg-clip-text bg-gradient-to-br from-purple-600 to-red-600"><img src="/robot.png" alt="Robot" width="50" height="50" id="ada-image" class="inline cursor-pointer mb-2 " />tutor.ai</h1>
                     <h3 class="text-center text-[#4F4F4F] font-SF text-sm sm:text-lg mb-3 text-black">A tutor for math, physics, and everything in between
                     </h3>
                     <div class="flex flex-row items-center justify-center gap-3 lg:w-2/6 sm:w-6/12 w-12/12">
@@ -167,43 +167,35 @@ export default function Home() {
                             <option value="Mathematics">Mathematics</option>
                         </select>
                         <div class="absolute z-10 rounded-xl p-3 text-[#4F4F4F] text-sm sm:text-base font-SF 
-                        transform md:translate-x-[95%] translate-x-[20%] 
-                        translate-y-16
-                        w-64  flex flex-col justify-center items-center
-                        transition duration-200 ease-in-out shadow-xl
-                        opacity-0">
-                </div>
-                </div>
-                <div class="h-5/6 lg:w-3/6 sm:w-6/12 w-12/12 border-2 rounded-3xl px-3 pb-3 flex flex-col justify-between gap-2 h-[calc(100vh-232px)] overflow-scroll ">
-                <div class="flex flex-col h-full gap-2 overflow-y-auto no-scrollbar scrollbar-hide" id="messageScreen">
-                    {messageList}
-                    {typing ? <TypingMsg /> : null}
-                </div>
-            <div class="rounded-3xl border-2 flex p-1 justify-between">
-
-    <textarea ref={inputReference} class="font-SF text-sm md:text-md lg:text-lg self-center px-2 w-full rounded-2xl  outline-none resize-none transition-all animate-grow" 
-    id="textarea" 
-    placeholder={hints[Math.floor(Math.random() * hints.length)]}
-    rows="1" 
-    style={{height: '20px', overflowY: 'hidden'}}
-    onKeyDown={handleKeyDown}
-    >
-    </textarea>
-    <a onClick={handleSubmit}>
-    <svg width="33" 
-    height="33" 
-    viewBox="0 0 33 33"
-    fill="none" class="transform hover:scale-110 transition duration-300 glow ease-in-out self-end cursor-pointer z-1" xmlns="http://www.w3.org/2000/svg">
-<circle cx="16.5" cy="16.5" r="16.5" fill="#067EFE"/>
-<path d="M17 25.5V8M17 8L10 14M17 8L23.5 14" stroke="white" stroke-width="3" stroke-linecap="round"/>
-</svg>
-    </a>
-    </div>
-    </div>
-    <h3 onClick={clear} class="font-SF my-2 text-[#067EFE] cursor-pointer">clear chat</h3>
-    </main>
-    </div>
-    </div>
-    </Box>
+                                transform md:translate-x-[95%] translate-x-[20%] 
+                                translate-y-16
+                                w-64  flex flex-col justify-center items-center
+                                transition duration-200 ease-in-out shadow-xl
+                                opacity-0">
+                        </div>
+                    </div>
+                    <div class="h-5/6 lg:w-3/6 sm:w-6/12 w-12/12 border-2 rounded-3xl px-3 pb-3 flex flex-col justify-between gap-2 h-[calc(100vh-232px)] overflow-scroll ">
+                        <div class="flex flex-col h-full gap-2 overflow-y-auto no-scrollbar scrollbar-hide" id="messageScreen">
+                            {messageList}
+                            {typing ? <TypingMsg /> : null}
+                        </div>
+                        <div class="rounded-3xl border-2 flex p-1 justify-between">
+                            <textarea ref={inputReference} 
+                            class="font-SF text-sm md:text-md lg:text-lg self-center px-2 w-full rounded-2xl  outline-none resize-none transition-all animate-grow" 
+                            id="textarea" 
+                            placeholder={hints[Math.floor(Math.random() * hints.length)]}
+                            rows="1" 
+                            style={{height: '20px', overflowY: 'hidden'}}
+                            onKeyDown={handleKeyDown}
+                            />
+                            <a onClick={handleSubmit}>
+                                <SubmitButton />
+                            </a>
+                        </div>
+                    </div>
+                    <h3 onClick={clear} class="font-SF my-2 text-[#067EFE] cursor-pointer">clear chat</h3>
+                </main>
+            </div>
+        </div>
     )
 }
