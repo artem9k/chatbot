@@ -3,7 +3,6 @@
 
 const SubmitButton = () => {
     return (
-
         <svg width="33" 
     height="33" 
     viewBox="0 0 33 33"

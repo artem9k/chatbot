@@ -59,7 +59,6 @@ export default function Home() {
     }
 
     useEffect(() => {
-
         // animation stuff 
 
         (() => {
@@ -125,6 +124,7 @@ export default function Home() {
         const new_message_list = [...messageList, new_message]
         setMessageList(new_message_list);
         setHandleMessage(false)
+        inputReference.current.value = "";
     }
 
     const handleKeyDown = (e) => {
